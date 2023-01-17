@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname ,'view','index.html'))
 })
 
-app.post('/upload', upload.single('image-input'), async (req, res) => {
+app.post('/upload', upload.single('image-form'), async (req, res) => {
   filePath = 'tmp/' + req.file.filename
   const data = await getFileInfo(filePath)
   console.log('test: ', data)
