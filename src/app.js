@@ -3,12 +3,14 @@ import path from "path"
 import multer from "multer";
 import ExifReader from "exifreader";
 import fs from "fs";
+import cors from "cors";
 
 // const filePath = './tmp/1.jpg'
 var filePath
 const __dirname = path.resolve();
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const storage = multer.diskStorage({
   destination : (req, file, cb) => {
@@ -34,7 +36,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname ,'view','index.html'))
 })
 
-app.post('/upload', upload.single('image-form'), async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
   filePath = 'tmp/' + req.file.filename
   const data = await getFileInfo(filePath)
   console.log('test: ', data)
