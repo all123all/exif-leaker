@@ -4,7 +4,7 @@ import multer from "multer";
 import ExifReader from "exifreader";
 import fs from "fs";
 import cors from "cors";
-
+import mime from "mime-types"
 // const filePath = './tmp/1.jpg'
 var filePath
 const __dirname = path.resolve();
@@ -37,11 +37,20 @@ app.get('/', (req, res) => {
 })
 
 app.post('/upload', upload.single('image'), async (req, res) => {
-  filePath = 'tmp/' + req.file.filename
-  const data = await getFileInfo(filePath)
-  console.log('test: ', data)
-  res.status(200)
-  res.send(data)
+  try{
+    if(!req.file) throw new Error('No file provided.')
+    const fileType = mime.lookup(req.file.originalname)
+    if(!['image/jpeg', 'image/tiff', 'image/png', 'image/heic', 'image/webp'].includes(fileType)){
+      throw new Error("Invalid picture type. Only  JPEG, TIFF, PNG, HEIC, and WebP allowed.")
+    }
+    filePath = 'tmp/' + req.file.filename
+    const data = await getFileInfo(filePath)
+    console.log('test: ', data)
+    res.status(200).send(data)
+  }catch(err){
+    console.error(err)
+    res.status(400).send(err.message)
+  }
 })
 
 app.use((err, req, res, next) => {
